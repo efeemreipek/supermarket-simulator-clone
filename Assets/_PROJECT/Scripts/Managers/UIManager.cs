@@ -53,7 +53,12 @@ public class UIManager : Singleton<UIManager>
         }
 
         priceString = shelfProductNewPriceInput.text.Trim('$');
-        currentShelf.ProductPrice = float.Parse(priceString);
+        float newPrice = float.Parse(priceString);
+        if(newPrice != currentShelf.ProductPrice)
+        {
+            currentShelf.ProductPrice = newPrice;
+            currentShelf.SetSameProductShelvesPrice(currentShelf.ProductPrice);
+        }
 
         currentShelf = null;
         OnUIPanelClosed?.Invoke();

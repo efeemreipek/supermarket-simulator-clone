@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Shelf : Selectable
 {
@@ -63,6 +64,7 @@ public class Shelf : Selectable
         if(productAmount == 0)
         {
             shelfProduct = null;
+            ProductPrice = 0f;
         }
     }
     public bool RemoveProduct()
@@ -75,6 +77,7 @@ public class Shelf : Selectable
         if(productAmount == 0)
         {
             shelfProduct = null;
+            ProductPrice = 0f;
         }
         return true;
     }
@@ -95,5 +98,17 @@ public class Shelf : Selectable
             if(t.childCount > 0) return t;
         }
         return null;
+    }
+
+    public void SetSameProductShelvesPrice(float price)
+    {
+        List<Shelf> sameProductShelves = FindObjectsByType<Shelf>(FindObjectsSortMode.None)
+            .Where(shelf => shelf.Product == Product)
+            .ToList();
+
+        foreach(Shelf s in sameProductShelves)
+        {
+            s.ProductPrice = price;
+        }
     }
 }
