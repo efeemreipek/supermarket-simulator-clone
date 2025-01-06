@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4da6437c2d965c64cb1c41b355e59427, type: 3}
+  m_Name: Sauce Bottle
+  m_EditorClassIdentifier: 
+  Name: Sauce Bottle
+  Prefab: {fileID: 1009124528345621692, guid: 8210a784e0b90cb4b9313d62005e3629, type: 3}
+  DisplayImage: {fileID: 21300000, guid: 92c6c3cca2d158d4499607092fe0ba5b, type: 3}
+  OrderPrice: 4.2
