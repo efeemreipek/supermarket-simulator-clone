@@ -44,6 +44,7 @@ public class Customer : MonoBehaviour
     private Shelf selectedShelf;
     private CashRegister selectedCashRegister;
     private CreditCard creditCard;
+    private Shelf nextShelf;
 
     private ProductSO lastProductOfShoppingList => shoppingList.Elements[shoppingList.Elements.Count - 1].Product;
 
@@ -167,7 +168,7 @@ public class Customer : MonoBehaviour
         }
 
         ProductSO currentProduct = shoppingList.Elements[currentShoppingListIndex].Product;
-        Shelf nextShelf = allShelves
+        nextShelf = allShelves
             .FirstOrDefault(shelf => shelf.Product == currentProduct);
 
         if(nextShelf == null)
@@ -349,6 +350,13 @@ public class Customer : MonoBehaviour
             transform.DOKill(true);
             transform.DORotateQuaternion(lookRotation, time).SetEase(Ease.OutQuad);
         }
+        else if(state == ECustomerState.MovingToShelf && nextShelf != null)
+        {
+            Vector3 directionToFace = -nextShelf.transform.forward;
+            Quaternion lookRotation = Quaternion.LookRotation(directionToFace);
+            transform.DOKill(true);
+            transform.DORotateQuaternion(lookRotation, time).SetEase(Ease.OutQuad);
+        }
         else
         {
             // For shelves and other cases, use the position-based rotation
@@ -360,7 +368,6 @@ public class Customer : MonoBehaviour
         }
     }
 
-    // Keep this overload for any remaining Transform-based calls
     private void RotateTowards(Transform target, float time = 0.5f)
     {
         RotateTowards(target.position, time);
