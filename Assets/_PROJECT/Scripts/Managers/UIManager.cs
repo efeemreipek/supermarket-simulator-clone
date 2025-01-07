@@ -18,6 +18,8 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GameObject instructionsPanel;
     [Header("Pause")]
     [SerializeField] private GameObject pausePanel;
+    [Header("Main Screen")]
+    [SerializeField] private GameObject mainScreenPanel;
 
     public bool IsInstructionsPanelActive => instructionsPanel.activeSelf;
 
@@ -84,5 +86,16 @@ public class UIManager : Singleton<UIManager>
     public void ChangeBalanceText(decimal newBalance)
     {
         balanceText.SetText($"${newBalance:F1}");
+    }
+
+    // MAIN SCREEN
+    public void PlayButton()
+    {
+        mainScreenPanel.SetActive(false);
+        PauseManager.Instance.IsPaused = false;
+    }
+    public void QuitButton()
+    {
+        Application.Quit();
     }
 }

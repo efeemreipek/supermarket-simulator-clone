@@ -83,8 +83,6 @@ public class FirstPersonController : MonoBehaviour
 		// reset our timeouts on start
 		jumpTimeoutDelta = jumpTimeout;
 		fallTimeoutDelta = fallTimeout;
-
-		SetCursorLock(true);
     }
     private void OnEnable()
     {
@@ -127,7 +125,7 @@ public class FirstPersonController : MonoBehaviour
 	{
 		if(isUIActive) return;
 		if(isCameraChanged) return;
-		if(PauseManager.IsPaused) return;
+		if(PauseManager.Instance.IsPaused) return;
 
 		JumpAndGravity();
 		GroundedCheck();
@@ -138,7 +136,7 @@ public class FirstPersonController : MonoBehaviour
 	{
         if(isUIActive) return;
 		if(isCameraChanged) return;
-        if(PauseManager.IsPaused) return;
+        if(PauseManager.Instance.IsPaused) return;
 
         CameraRotation();
 	}

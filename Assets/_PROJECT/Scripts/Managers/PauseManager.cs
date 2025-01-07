@@ -1,12 +1,21 @@
 using UnityEngine;
 
-public class PauseManager : MonoBehaviour
+public class PauseManager : Singleton<PauseManager>
 {
     [SerializeField] private InputValues inputValues;
 
+    private bool isPaused = true;
     private bool wasInstructionsPanelActiveBeforePause = false;
 
-    public static bool IsPaused = false;
+    public bool IsPaused
+    {
+        get => isPaused;
+        set
+        {
+            isPaused = value;            
+            SetCursorLock(!value);
+        }
+    }
 
     private void Update()
     {
@@ -16,8 +25,6 @@ public class PauseManager : MonoBehaviour
 
             IsPaused = !IsPaused;
             Time.timeScale = IsPaused ? 0f : 1f;
-
-            Debug.Log("IsPaused: " + IsPaused);
 
             if(IsPaused)
             {
@@ -37,5 +44,11 @@ public class PauseManager : MonoBehaviour
 
             UIManager.Instance.OpenClosePause();
         }
+    }
+
+    private void SetCursorLock(bool locked)
+    {
+        Cursor.visible = !locked;
+        Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
     }
 }
