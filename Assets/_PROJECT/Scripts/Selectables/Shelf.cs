@@ -52,6 +52,7 @@ public class Shelf : Selectable
         if(shelfProduct == null)
         {
             shelfProduct = box.Product;
+            SetShelfPriceSameAsOthers();
         }
     }
     public void RemoveProduct(Box box, BaseProduct product)
@@ -98,6 +99,15 @@ public class Shelf : Selectable
             if(t.childCount > 0) return t;
         }
         return null;
+    }
+    private void SetShelfPriceSameAsOthers()
+    {
+        List<Shelf> sameProductShelves = FindObjectsByType<Shelf>(FindObjectsSortMode.None)
+            .Where(shelf => shelf.Product == Product)
+            .ToList();
+
+        ProductPrice = sameProductShelves.FirstOrDefault().ProductPrice;
+
     }
 
     public void SetSameProductShelvesPrice(float price)
