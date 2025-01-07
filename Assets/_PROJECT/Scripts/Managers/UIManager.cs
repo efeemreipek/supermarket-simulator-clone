@@ -16,6 +16,10 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private TextMeshProUGUI balanceText;
     [Header("Instructions")]
     [SerializeField] private GameObject instructionsPanel;
+    [Header("Pause")]
+    [SerializeField] private GameObject pausePanel;
+
+    public bool IsInstructionsPanelActive => instructionsPanel.activeSelf;
 
     public static event Action OnUIPanelOpened;
     public static event Action OnUIPanelClosed;
@@ -64,6 +68,10 @@ public class UIManager : Singleton<UIManager>
     public void OpenCloseInstructions()
     {
         instructionsPanel.SetActive(!instructionsPanel.activeSelf);
+    }
+    public void OpenClosePause()
+    {
+        pausePanel.SetActive(!pausePanel.activeSelf);
     }
 
     public void ChangeAmount(float amount)

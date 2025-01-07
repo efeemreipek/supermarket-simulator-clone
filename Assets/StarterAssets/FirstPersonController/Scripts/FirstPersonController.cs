@@ -127,6 +127,7 @@ public class FirstPersonController : MonoBehaviour
 	{
 		if(isUIActive) return;
 		if(isCameraChanged) return;
+		if(PauseManager.IsPaused) return;
 
 		JumpAndGravity();
 		GroundedCheck();
@@ -137,6 +138,7 @@ public class FirstPersonController : MonoBehaviour
 	{
         if(isUIActive) return;
 		if(isCameraChanged) return;
+        if(PauseManager.IsPaused) return;
 
         CameraRotation();
 	}

@@ -14,6 +14,7 @@ public class InputHandler : MonoBehaviour
     private InputAction actionSecondary;
     private InputAction actionInteract;
     private InputAction actionAlternateInteract;
+    private InputAction actionEscape;
 
     private void OnEnable()
     {
@@ -25,6 +26,7 @@ public class InputHandler : MonoBehaviour
         actionSecondary = InputSystem.actions.FindAction("Secondary Action");
         actionInteract = InputSystem.actions.FindAction("Interact Action");
         actionAlternateInteract = InputSystem.actions.FindAction("Alternate Interact Action");
+        actionEscape = InputSystem.actions.FindAction("Escape");
 
         actionMove.performed += Move_Performed;
         actionMove.canceled += Move_Canceled;
@@ -49,6 +51,9 @@ public class InputHandler : MonoBehaviour
 
         actionAlternateInteract.performed += AlternateInteract_Performed;
         actionAlternateInteract.canceled += AlternateInteract_Canceled;
+
+        actionEscape.performed += Escape_Performed;
+        actionEscape.canceled += Escape_Canceled;
 
         InputSystem.actions.Enable();
     }
@@ -78,6 +83,9 @@ public class InputHandler : MonoBehaviour
         actionAlternateInteract.performed -= AlternateInteract_Performed;
         actionAlternateInteract.canceled -= AlternateInteract_Canceled;
 
+        actionEscape.performed -= Escape_Performed;
+        actionEscape.canceled -= Escape_Canceled;
+
         InputSystem.actions.Disable();
     }
 
@@ -97,4 +105,6 @@ public class InputHandler : MonoBehaviour
     private void Interact_Canceled(InputAction.CallbackContext obj) => inputValues.InteractAction = false;
     private void AlternateInteract_Performed(InputAction.CallbackContext obj) => inputValues.AlternateInteractAction = obj.ReadValueAsButton();
     private void AlternateInteract_Canceled(InputAction.CallbackContext obj) => inputValues.AlternateInteractAction = false;
+    private void Escape_Performed(InputAction.CallbackContext obj) => inputValues.Escape = obj.ReadValueAsButton();
+    private void Escape_Canceled(InputAction.CallbackContext obj) => inputValues.Escape = false;
 }

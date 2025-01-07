@@ -11,4 +11,5 @@ public class InputValues : ScriptableObject
     public bool SecondaryAction;
     public bool InteractAction;
     public bool AlternateInteractAction;
+    public bool Escape;
 }
