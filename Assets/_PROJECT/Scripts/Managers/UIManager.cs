@@ -20,11 +20,16 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GameObject pausePanel;
     [Header("Main Screen")]
     [SerializeField] private GameObject mainScreenPanel;
+    [Header("Market Name")]
+    [SerializeField] private GameObject marketNamePanel;
+    [SerializeField] private TextMeshProUGUI currentMarketNameText;
+    [SerializeField] private TMP_InputField newMarketNameInput;
 
     public bool IsInstructionsPanelActive => instructionsPanel.activeSelf;
 
     public static event Action OnUIPanelOpened;
     public static event Action OnUIPanelClosed;
+    public static event Action<string> OnMarketNameChanged;
 
     private Shelf currentShelf;
 
@@ -64,6 +69,24 @@ public class UIManager : Singleton<UIManager>
         currentShelf.SetSameProductShelvesPrice(currentShelf.ProductPrice);
 
         currentShelf = null;
+        OnUIPanelClosed?.Invoke();
+    }
+
+    public void OpenMarketNamePanel(MarketName marketName)
+    {
+        marketNamePanel.SetActive(true);
+
+        currentMarketNameText.SetText($"Current Name: {marketName.Name}");
+
+        OnUIPanelOpened?.Invoke();
+    }
+    public void CloseMarketNamePanel()
+    {
+        marketNamePanel.SetActive(false);
+
+        OnMarketNameChanged?.Invoke(newMarketNameInput.text);
+        newMarketNameInput.SetTextWithoutNotify(string.Empty);
+
         OnUIPanelClosed?.Invoke();
     }
 

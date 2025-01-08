@@ -92,6 +92,11 @@ public class ObjectInteractor : MonoBehaviour
             {
                 openCloseSign.ChangeState();
             }
+            // open market name change panel
+            if(selector.CurrentSelectable != null && !isHoldingBox && selector.CurrentSelectable.GameObject.TryGetComponent(out MarketName marketName))
+            {
+                UIManager.Instance.OpenMarketNamePanel(marketName);
+            }
         }
 
         // when alternate interact button is pressed

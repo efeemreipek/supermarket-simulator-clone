@@ -14,7 +14,8 @@ public enum EInstructionType
     OpenComputer,
     CheckProduct,
     OpenCloseSign,
-    ChangePriceShelf
+    ChangePriceShelf,
+    ChangeMarketName
 }
 
 public class InstructionsManager : MonoBehaviour
@@ -38,6 +39,7 @@ public class InstructionsManager : MonoBehaviour
         {EInstructionType.CheckProduct, "[LMB]-Check product from register"},
         {EInstructionType.OpenCloseSign, "[LMB]-Open/Close Market"},
         {EInstructionType.ChangePriceShelf, "[E]-Change shelf price"},
+        {EInstructionType.ChangeMarketName, "[LMB]-Change market name"},
     };
 
     private void Awake()
@@ -122,6 +124,12 @@ public class InstructionsManager : MonoBehaviour
             if(interactor.IsHoldingBox) return;
 
             AddInstruction(EInstructionType.OpenCloseSign);
+        }
+        if(newSelectable.GameObject.TryGetComponent(out MarketName marketName))
+        {
+            if(interactor.IsHoldingBox) return;
+
+            AddInstruction(EInstructionType.ChangeMarketName);
         }
     }
 
