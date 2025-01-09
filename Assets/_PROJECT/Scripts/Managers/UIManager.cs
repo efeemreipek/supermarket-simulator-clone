@@ -2,6 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -33,9 +36,27 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private Slider blueSlider;
     [SerializeField] private TextMeshProUGUI blueSliderValueText;
     [SerializeField] private Image colorPreviewImage;
+    [Header("Settings")]
+    [SerializeField] private SettingsSO settings;
+    [SerializeField] private Volume volume;
+    [SerializeField] private GameObject settingsPanel;
+    [SerializeField] private Slider mouseSensitivitySlider;
+    [SerializeField] private TextMeshProUGUI mouseSensitivitySliderValueText;
+    [SerializeField] private TMP_Dropdown qualityDropdown;
+    [SerializeField] private TMP_Dropdown resolutionDropdown;
+    [SerializeField] private Toggle fullscreenToggle;
+    [SerializeField] private Slider brightnessSlider;
+    [SerializeField] private TextMeshProUGUI brightnessSliderValueText;
 
     private Color previewColor = Color.black;
     private float redSliderValue, greenSliderValue, blueSliderValue;
+    private float mouseSensitivitySliderValue, brightnessSliderValue;
+    private bool isFullscreen = true;
+    private Resolution[] resolutions;
+    private Resolution defaultResolution;
+    private int defaultResolutionIndex;
+    private int defaultQualityLevel;
+    private ColorAdjustments colorAdjustments;
 
     public bool IsInstructionsPanelActive => instructionsPanel.activeSelf;
 
@@ -45,6 +66,68 @@ public class UIManager : Singleton<UIManager>
 
     private Shelf currentShelf;
 
+    private void Start()
+    {
+        // load mouse sensitivity
+        mouseSensitivitySliderValue = settings.IsSet ? settings.MouseSensitivity : mouseSensitivitySlider.value;
+        mouseSensitivitySlider.value = mouseSensitivitySliderValue;
+        mouseSensitivitySliderValueText.SetText(mouseSensitivitySliderValue.ToString("F2"));
+
+        // load brightness
+        volume.profile.TryGet(out colorAdjustments);
+        brightnessSliderValue = settings.IsSet ? settings.Brightness : brightnessSlider.value;
+        brightnessSlider.value = brightnessSliderValue;
+        brightnessSliderValueText.SetText(brightnessSliderValue.ToString());
+        colorAdjustments.postExposure.value = settings.IsSet ? settings.Brightness / 25 : brightnessSliderValue / 25;
+
+        // initalize and load quality dropdown
+        defaultQualityLevel = settings.IsSet ? settings.QualityIndex : QualitySettings.GetQualityLevel();
+        qualityDropdown.ClearOptions();
+        qualityDropdown.AddOptions(new List<string>(QualitySettings.names));
+        qualityDropdown.SetValueWithoutNotify(defaultQualityLevel);
+
+        // initialize resolution dropdown
+        resolutions = Screen.resolutions;
+        List<string> resolutionDropdownOptions = new List<string>();
+        for(int i = 0; i < resolutions.Length; i++)
+        {
+            string option = resolutions[i].width + "x" + resolutions[i].height + "@" + (int)resolutions[i].refreshRateRatio.value;
+            resolutionDropdownOptions.Add(option);
+        }
+
+        // load resolution
+        if(settings.IsSet)
+        {
+            defaultResolutionIndex = settings.ResolutionIndex;
+        }
+        else
+        {
+            // get current resolution
+            string currentResolutionString = Screen.currentResolution.width + "x" + Screen.currentResolution.height
+                                             + " @" + (int)Screen.currentResolution.refreshRateRatio.value;
+            defaultResolutionIndex = resolutionDropdownOptions.IndexOf(currentResolutionString);
+            // if current resolution is not in the list then add it 
+            if(defaultResolutionIndex < 0)
+            {
+                resolutionDropdownOptions.Add(currentResolutionString);
+                defaultResolutionIndex = resolutionDropdownOptions.Count - 1;
+                defaultResolution = Screen.currentResolution;
+            }
+            else
+            {
+                defaultResolution = resolutions[defaultResolutionIndex];
+            }
+        }
+
+        resolutionDropdown.ClearOptions();
+        resolutionDropdown.AddOptions(resolutionDropdownOptions);
+        resolutionDropdown.SetValueWithoutNotify(defaultResolutionIndex);
+
+        //load fullscreen
+        isFullscreen = settings.IsSet ? settings.IsFullscreen : fullscreenToggle.isOn;
+        fullscreenToggle.isOn = isFullscreen;
+    }
+    #region Shelf
     public void OpenShelfPricePanel(Shelf shelf)
     {
         if(!shelf.HasProduct) return;
@@ -83,7 +166,19 @@ public class UIManager : Singleton<UIManager>
         currentShelf = null;
         OnUIPanelClosed?.Invoke();
     }
-
+    public void ChangeAmount(float amount)
+    {
+        string priceString = shelfProductNewPriceInput.text.Trim('$');
+        float price = float.Parse(priceString);
+        price = Mathf.Max(price + amount, 0f);
+        shelfProductNewPriceInput.SetTextWithoutNotify("$" + price.ToString());
+    }
+    public void ChangeBalanceText(decimal newBalance)
+    {
+        balanceText.SetText($"${newBalance:F1}");
+    }
+    #endregion
+    #region Market Name
     public void OpenMarketNamePanel(MarketName marketName)
     {
         marketNamePanel.SetActive(true);
@@ -101,16 +196,6 @@ public class UIManager : Singleton<UIManager>
 
         OnUIPanelClosed?.Invoke();
     }
-
-    public void OpenCloseInstructions()
-    {
-        instructionsPanel.SetActive(!instructionsPanel.activeSelf);
-    }
-    public void OpenClosePause()
-    {
-        pausePanel.SetActive(!pausePanel.activeSelf);
-    }
-
     public void OnRedSliderValueChanged(float value)
     {
         redSliderValue = value;
@@ -137,27 +222,100 @@ public class UIManager : Singleton<UIManager>
         previewColor = new Color(redSliderValue / 255f, greenSliderValue / 255f, blueSliderValue / 255f);
         colorPreviewImage.color = previewColor;
     }
-
-    public void ChangeAmount(float amount)
-    {
-        string priceString = shelfProductNewPriceInput.text.Trim('$');
-        float price = float.Parse(priceString);
-        price = Mathf.Max(price + amount, 0f);
-        shelfProductNewPriceInput.SetTextWithoutNotify("$" + price.ToString());
-    }
-    public void ChangeBalanceText(decimal newBalance)
-    {
-        balanceText.SetText($"${newBalance:F1}");
-    }
-
-    // MAIN SCREEN
+    #endregion
+    #region Main Screen
     public void PlayButton()
     {
         mainScreenPanel.SetActive(false);
         PauseManager.Instance.IsPaused = false;
+        PauseManager.Instance.IsGameStarted = true;
     }
     public void QuitButton()
     {
         Application.Quit();
     }
+    public void SettingsButton()
+    {
+        if(PauseManager.Instance.IsGameStarted)
+        {
+            pausePanel.SetActive(false);
+        }
+        else
+        {
+            mainScreenPanel.SetActive(false);
+        }
+        settingsPanel.SetActive(true);
+    }
+    public void ResumeButton()
+    {
+        PauseManager.Instance.UnpauseGame();
+    }
+    #endregion
+    #region Settings
+    public void BackButton()
+    {
+        settingsPanel.SetActive(false);
+        if(PauseManager.Instance.IsGameStarted)
+        {
+            pausePanel.SetActive(true);
+        }
+        else
+        {
+            mainScreenPanel.SetActive(true);
+        }
+    }
+    public void ApplyButton()
+    {
+        settings.IsSet = true;
+
+        settings.MouseSensitivity = mouseSensitivitySliderValue;
+        
+        settings.QualityIndex = defaultQualityLevel;
+        QualitySettings.SetQualityLevel(defaultQualityLevel);
+
+        settings.ResolutionIndex = defaultResolutionIndex;
+        if(defaultResolutionIndex >= resolutions.Length)
+        {
+            SetResolution(defaultResolution);
+        }
+        else
+        {
+            SetResolution(resolutions[defaultResolutionIndex]);
+        }
+
+        settings.IsFullscreen = isFullscreen;
+        Screen.fullScreen = isFullscreen;
+
+        if(colorAdjustments != null)
+        { 
+            settings.Brightness = brightnessSliderValue;
+            colorAdjustments.postExposure.value = brightnessSliderValue / 25;
+        }
+    }
+    public void OnMouseSensitivitySliderValueChanged(float value)
+    {
+        mouseSensitivitySliderValue = value;
+        mouseSensitivitySliderValueText.SetText(mouseSensitivitySliderValue.ToString("F2"));
+    }
+    public void OnBrightnessSliderValueChanged(float value)
+    {
+        brightnessSliderValue = value;
+        brightnessSliderValueText.SetText(brightnessSliderValue.ToString());
+    }
+    public void SetFullscreen(bool toggle) => isFullscreen = toggle;
+    public void OnQualityChanged(int qualityIndex) => defaultQualityLevel = qualityIndex;
+    public void OnResolutionChanged(int resolutionIndex) => defaultResolutionIndex = resolutionIndex;
+    private void SetResolution(Resolution resolution) => Screen.SetResolution(resolution.width, resolution.height, 
+        Screen.fullScreen ? FullScreenMode.ExclusiveFullScreen : FullScreenMode.Windowed, resolution.refreshRateRatio);
+    #endregion
+    #region Misc
+    public void OpenCloseInstructions()
+    {
+        instructionsPanel.SetActive(!instructionsPanel.activeSelf);
+    }
+    public void OpenClosePause()
+    {
+        pausePanel.SetActive(!pausePanel.activeSelf);
+    }
+    #endregion
 }

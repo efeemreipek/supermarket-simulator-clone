@@ -16,34 +16,39 @@ public class PauseManager : Singleton<PauseManager>
             SetCursorLock(!value);
         }
     }
+    public bool IsGameStarted { get; set; } = false;
 
     private void Update()
     {
-        if(inputValues.Escape)
+        if(inputValues.Escape && !IsPaused)
         {
             inputValues.Escape = false;
 
-            IsPaused = !IsPaused;
-            Time.timeScale = IsPaused ? 0f : 1f;
-
-            if(IsPaused)
-            {
-                wasInstructionsPanelActiveBeforePause = UIManager.Instance.IsInstructionsPanelActive;
-                if(wasInstructionsPanelActiveBeforePause)
-                {
-                    UIManager.Instance.OpenCloseInstructions();
-                }
-            }
-            else
-            {
-                if(wasInstructionsPanelActiveBeforePause)
-                {
-                    UIManager.Instance.OpenCloseInstructions();
-                }
-            }
-
-            UIManager.Instance.OpenClosePause();
+            UnpauseGame();
         }
+    }
+    public void UnpauseGame()
+    {
+        IsPaused = !IsPaused;
+        Time.timeScale = IsPaused ? 0f : 1f;
+
+        if(IsPaused)
+        {
+            wasInstructionsPanelActiveBeforePause = UIManager.Instance.IsInstructionsPanelActive;
+            if(wasInstructionsPanelActiveBeforePause)
+            {
+                UIManager.Instance.OpenCloseInstructions();
+            }
+        }
+        else
+        {
+            if(wasInstructionsPanelActiveBeforePause)
+            {
+                UIManager.Instance.OpenCloseInstructions();
+            }
+        }
+
+        UIManager.Instance.OpenClosePause();
     }
 
     private void SetCursorLock(bool locked)
