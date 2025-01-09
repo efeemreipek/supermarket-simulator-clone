@@ -24,12 +24,24 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GameObject marketNamePanel;
     [SerializeField] private TextMeshProUGUI currentMarketNameText;
     [SerializeField] private TMP_InputField newMarketNameInput;
+    [SerializeField] private Toggle boldToggle;
+    [SerializeField] private Toggle italicToggle;
+    [SerializeField] private Slider redSlider;
+    [SerializeField] private TextMeshProUGUI redSliderValueText;
+    [SerializeField] private Slider greenSlider;
+    [SerializeField] private TextMeshProUGUI greenSliderValueText;
+    [SerializeField] private Slider blueSlider;
+    [SerializeField] private TextMeshProUGUI blueSliderValueText;
+    [SerializeField] private Image colorPreviewImage;
+
+    private Color previewColor = Color.black;
+    private float redSliderValue, greenSliderValue, blueSliderValue;
 
     public bool IsInstructionsPanelActive => instructionsPanel.activeSelf;
 
     public static event Action OnUIPanelOpened;
     public static event Action OnUIPanelClosed;
-    public static event Action<string> OnMarketNameChanged;
+    public static event Action<string, Color, bool, bool> OnMarketNameChanged;
 
     private Shelf currentShelf;
 
@@ -84,7 +96,7 @@ public class UIManager : Singleton<UIManager>
     {
         marketNamePanel.SetActive(false);
 
-        OnMarketNameChanged?.Invoke(newMarketNameInput.text);
+        OnMarketNameChanged?.Invoke(newMarketNameInput.text, previewColor, boldToggle.isOn, italicToggle.isOn);
         newMarketNameInput.SetTextWithoutNotify(string.Empty);
 
         OnUIPanelClosed?.Invoke();
@@ -97,6 +109,33 @@ public class UIManager : Singleton<UIManager>
     public void OpenClosePause()
     {
         pausePanel.SetActive(!pausePanel.activeSelf);
+    }
+
+    public void OnRedSliderValueChanged(float value)
+    {
+        redSliderValue = value;
+        redSliderValueText.SetText(Mathf.RoundToInt(redSliderValue).ToString());
+
+        UpdatePreviewColor();
+    }
+    public void OnGreenSliderValueChanged(float value)
+    {
+        greenSliderValue = value;
+        greenSliderValueText.SetText(Mathf.RoundToInt(greenSliderValue).ToString());
+
+        UpdatePreviewColor();
+    }
+    public void OnBlueSliderValueChanged(float value)
+    {
+        blueSliderValue = value;
+        blueSliderValueText.SetText(Mathf.RoundToInt(blueSliderValue).ToString());
+
+        UpdatePreviewColor();
+    }
+    private void UpdatePreviewColor()
+    {
+        previewColor = new Color(redSliderValue / 255f, greenSliderValue / 255f, blueSliderValue / 255f);
+        colorPreviewImage.color = previewColor;
     }
 
     public void ChangeAmount(float amount)

@@ -10,8 +10,17 @@ public class MarketNameUI : MonoBehaviour
         marketNameText = GetComponent<TextMeshPro>();
     }
 
-    public void SetName(string name)
+    public void SetName(string name, Color color, bool bold, bool italic)
     {
         marketNameText.SetText(name);
+
+        marketNameText.color = color;
+
+        FontStyles fontStyle = FontStyles.Normal;
+        if(bold) fontStyle |= FontStyles.Bold;
+        if(italic) fontStyle |= FontStyles.Italic;
+
+        marketNameText.fontStyle = fontStyle;
+
     }
 }

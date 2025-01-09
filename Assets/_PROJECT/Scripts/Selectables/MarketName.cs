@@ -12,7 +12,7 @@ public class MarketName : Selectable
         base.Awake();
 
         marketNameUI = GetComponentInChildren<MarketNameUI>();
-        marketNameUI.SetName(Name);
+        marketNameUI.SetName(Name, Color.black, false, false);
     }
     private void OnEnable()
     {
@@ -23,9 +23,9 @@ public class MarketName : Selectable
         UIManager.OnMarketNameChanged -= UIManager_OnMarketNameChanged;
     }
 
-    private void UIManager_OnMarketNameChanged(string obj)
+    private void UIManager_OnMarketNameChanged(string name, Color color, bool bold, bool italic)
     {
-        Name = obj;
-        marketNameUI.SetName(Name);
+        Name = name;
+        marketNameUI.SetName(Name, color, bold, italic);
     }
 }
