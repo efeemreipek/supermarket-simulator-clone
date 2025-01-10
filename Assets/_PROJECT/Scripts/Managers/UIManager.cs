@@ -47,6 +47,9 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private Toggle fullscreenToggle;
     [SerializeField] private Slider brightnessSlider;
     [SerializeField] private TextMeshProUGUI brightnessSliderValueText;
+    [Header("Time")]
+    [SerializeField] private TextMeshProUGUI dayText;
+    [SerializeField] private TextMeshProUGUI timeText;
 
     private Color previewColor = Color.black;
     private float redSliderValue, greenSliderValue, blueSliderValue;
@@ -68,65 +71,9 @@ public class UIManager : Singleton<UIManager>
 
     private void Start()
     {
-        // load mouse sensitivity
-        mouseSensitivitySliderValue = settings.IsSet ? settings.MouseSensitivity : mouseSensitivitySlider.value;
-        mouseSensitivitySlider.value = mouseSensitivitySliderValue;
-        mouseSensitivitySliderValueText.SetText(mouseSensitivitySliderValue.ToString("F2"));
-
-        // load brightness
-        volume.profile.TryGet(out colorAdjustments);
-        brightnessSliderValue = settings.IsSet ? settings.Brightness : brightnessSlider.value;
-        brightnessSlider.value = brightnessSliderValue;
-        brightnessSliderValueText.SetText(brightnessSliderValue.ToString());
-        colorAdjustments.postExposure.value = settings.IsSet ? settings.Brightness / 25 : brightnessSliderValue / 25;
-
-        // initalize and load quality dropdown
-        defaultQualityLevel = settings.IsSet ? settings.QualityIndex : QualitySettings.GetQualityLevel();
-        qualityDropdown.ClearOptions();
-        qualityDropdown.AddOptions(new List<string>(QualitySettings.names));
-        qualityDropdown.SetValueWithoutNotify(defaultQualityLevel);
-
-        // initialize resolution dropdown
-        resolutions = Screen.resolutions;
-        List<string> resolutionDropdownOptions = new List<string>();
-        for(int i = 0; i < resolutions.Length; i++)
-        {
-            string option = resolutions[i].width + "x" + resolutions[i].height + "@" + (int)resolutions[i].refreshRateRatio.value;
-            resolutionDropdownOptions.Add(option);
-        }
-
-        // load resolution
-        if(settings.IsSet)
-        {
-            defaultResolutionIndex = settings.ResolutionIndex;
-        }
-        else
-        {
-            // get current resolution
-            string currentResolutionString = Screen.currentResolution.width + "x" + Screen.currentResolution.height
-                                             + " @" + (int)Screen.currentResolution.refreshRateRatio.value;
-            defaultResolutionIndex = resolutionDropdownOptions.IndexOf(currentResolutionString);
-            // if current resolution is not in the list then add it 
-            if(defaultResolutionIndex < 0)
-            {
-                resolutionDropdownOptions.Add(currentResolutionString);
-                defaultResolutionIndex = resolutionDropdownOptions.Count - 1;
-                defaultResolution = Screen.currentResolution;
-            }
-            else
-            {
-                defaultResolution = resolutions[defaultResolutionIndex];
-            }
-        }
-
-        resolutionDropdown.ClearOptions();
-        resolutionDropdown.AddOptions(resolutionDropdownOptions);
-        resolutionDropdown.SetValueWithoutNotify(defaultResolutionIndex);
-
-        //load fullscreen
-        isFullscreen = settings.IsSet ? settings.IsFullscreen : fullscreenToggle.isOn;
-        fullscreenToggle.isOn = isFullscreen;
+        LoadSettings();
     }
+
     #region Shelf
     public void OpenShelfPricePanel(Shelf shelf)
     {
@@ -252,6 +199,67 @@ public class UIManager : Singleton<UIManager>
     }
     #endregion
     #region Settings
+    private void LoadSettings()
+    {
+        // load mouse sensitivity
+        mouseSensitivitySliderValue = settings.IsSet ? settings.MouseSensitivity : mouseSensitivitySlider.value;
+        mouseSensitivitySlider.value = mouseSensitivitySliderValue;
+        mouseSensitivitySliderValueText.SetText(mouseSensitivitySliderValue.ToString("F2"));
+
+        // load brightness
+        volume.profile.TryGet(out colorAdjustments);
+        brightnessSliderValue = settings.IsSet ? settings.Brightness : brightnessSlider.value;
+        brightnessSlider.value = brightnessSliderValue;
+        brightnessSliderValueText.SetText(brightnessSliderValue.ToString());
+        colorAdjustments.postExposure.value = settings.IsSet ? settings.Brightness / 25 : brightnessSliderValue / 25;
+
+        // initalize and load quality dropdown
+        defaultQualityLevel = settings.IsSet ? settings.QualityIndex : QualitySettings.GetQualityLevel();
+        qualityDropdown.ClearOptions();
+        qualityDropdown.AddOptions(new List<string>(QualitySettings.names));
+        qualityDropdown.SetValueWithoutNotify(defaultQualityLevel);
+
+        // initialize resolution dropdown
+        resolutions = Screen.resolutions;
+        List<string> resolutionDropdownOptions = new List<string>();
+        for(int i = 0; i < resolutions.Length; i++)
+        {
+            string option = resolutions[i].width + "x" + resolutions[i].height + "@" + (int)resolutions[i].refreshRateRatio.value;
+            resolutionDropdownOptions.Add(option);
+        }
+
+        // load resolution
+        if(settings.IsSet)
+        {
+            defaultResolutionIndex = settings.ResolutionIndex;
+        }
+        else
+        {
+            // get current resolution
+            string currentResolutionString = Screen.currentResolution.width + "x" + Screen.currentResolution.height
+                                             + " @" + (int)Screen.currentResolution.refreshRateRatio.value;
+            defaultResolutionIndex = resolutionDropdownOptions.IndexOf(currentResolutionString);
+            // if current resolution is not in the list then add it 
+            if(defaultResolutionIndex < 0)
+            {
+                resolutionDropdownOptions.Add(currentResolutionString);
+                defaultResolutionIndex = resolutionDropdownOptions.Count - 1;
+                defaultResolution = Screen.currentResolution;
+            }
+            else
+            {
+                defaultResolution = resolutions[defaultResolutionIndex];
+            }
+        }
+
+        resolutionDropdown.ClearOptions();
+        resolutionDropdown.AddOptions(resolutionDropdownOptions);
+        resolutionDropdown.SetValueWithoutNotify(defaultResolutionIndex);
+
+        //load fullscreen
+        isFullscreen = settings.IsSet ? settings.IsFullscreen : fullscreenToggle.isOn;
+        fullscreenToggle.isOn = isFullscreen;
+    }
     public void BackButton()
     {
         settingsPanel.SetActive(false);
@@ -318,4 +326,9 @@ public class UIManager : Singleton<UIManager>
         pausePanel.SetActive(!pausePanel.activeSelf);
     }
     #endregion
+    public void UpdateDayTimeText(string dayString, string timeString)
+    {
+        dayText.SetText(dayString);
+        timeText.SetText(timeString);
+    }
 }
