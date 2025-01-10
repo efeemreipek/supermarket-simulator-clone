@@ -30,7 +30,6 @@ public class ComputerUI : MonoBehaviour
         OrderProductUI.OnOrderAmountAdded -= OrderProductUI_OnOrderAmountAdded;
         OrderProductUI.OnOrderAmountRemoved -= OrderProductUI_OnOrderAmountRemoved;
     }
-
     private void InitializeProducts()
     {
         if(productsListTransform.childCount > 0)

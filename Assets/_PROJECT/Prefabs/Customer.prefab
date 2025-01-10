@@ -393,7 +393,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3286f1ca3506c54fa022ec870ec9f09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  productList: {fileID: 11400000, guid: 9e635b5605f7e5b43b78bb86afbec34b, type: 2}
+  possibleProductListsList:
+  - {fileID: 11400000, guid: 77c18f9d4b95ae048884550eb90cd048, type: 2}
+  - {fileID: 11400000, guid: ebae1c84071b07549bba2e07c50730fa, type: 2}
+  - {fileID: 11400000, guid: 44dde6f18fe51474b83acefdc01e477f, type: 2}
+  - {fileID: 11400000, guid: f466352b1fea46c418b121589eaef482, type: 2}
+  - {fileID: 11400000, guid: 07503d1db8248d04bac9b908ff11f0c4, type: 2}
+  - {fileID: 11400000, guid: 9e635b5605f7e5b43b78bb86afbec34b, type: 2}
   productGatheringTime: 1
   handGO: {fileID: 770571192337021242}
 --- !u!1001 &8284349998353523010

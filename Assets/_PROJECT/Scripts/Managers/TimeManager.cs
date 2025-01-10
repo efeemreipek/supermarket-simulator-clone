@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class TimeManager : MonoBehaviour
@@ -10,6 +11,8 @@ public class TimeManager : MonoBehaviour
     private float timer = 0f;
     private string timeString = string.Empty;
     private string dayString = string.Empty;
+
+    public static event Action OnDayChanged;
 
     private void Start()
     {
@@ -35,6 +38,7 @@ public class TimeManager : MonoBehaviour
                 {
                     hour = 0;
                     day++;
+                    OnDayChanged?.Invoke();
 
                     dayString = $"DAY {day.ToString("D2")}";
                 }

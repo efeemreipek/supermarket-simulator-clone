@@ -4,6 +4,7 @@ using UnityEngine.AI;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using System;
+using System.Collections.Generic;
 
 public enum ECustomerState
 {
@@ -21,7 +22,7 @@ public enum ECustomerState
 
 public class Customer : MonoBehaviour
 {
-    [SerializeField] private ProductListSO productList;
+    [SerializeField] private List<ProductListSO> possibleProductListsList;
     [SerializeField] private float productGatheringTime = 2f;
     [SerializeField] private GameObject handGO;
 
@@ -38,6 +39,7 @@ public class Customer : MonoBehaviour
     private Vector3 currentQueuePosition;
     private bool isMovingInQueue = false;
     private bool hasStartedPlacingProducts = false;
+    private int satisfactionLevel = 0;
 
     private Shelf[] allShelves;
     private CashRegister[] allCashRegisters;
@@ -45,6 +47,7 @@ public class Customer : MonoBehaviour
     private CashRegister selectedCashRegister;
     private CreditCard creditCard;
     private Shelf nextShelf;
+    private ProductListSO productList;
 
     private ProductSO lastProductOfShoppingList => shoppingList.Elements[shoppingList.Elements.Count - 1].Product;
 
@@ -64,7 +67,6 @@ public class Customer : MonoBehaviour
     {
         creditCard.OnCreditCardTaken += CreditCard_OnCreditCardTaken;
         CashRegister.OnTransactionCompleted += CashRegister_OnTransactionCompleted;
-        
     }
     private void OnDisable()
     {
@@ -145,6 +147,7 @@ public class Customer : MonoBehaviour
     private void UpdateState_Spawn()
     {
         // make shopping list
+        productList = possibleProductListsList[UnityEngine.Random.Range(0, possibleProductListsList.Count)];
         shoppingList = new ShoppingList(productList);
         shoppingCart = new ShoppingCart();
         currentShoppingListIndex = 0;
@@ -190,6 +193,7 @@ public class Customer : MonoBehaviour
             await UniTask.Delay((int)productGatheringTime * 1000);
 
             currentShoppingListIndex++;
+            satisfactionLevel--;
             SetState(ECustomerState.MovingToShelf);
             return;
         }
@@ -218,6 +222,7 @@ public class Customer : MonoBehaviour
         }
 
         currentShoppingListIndex++;
+        satisfactionLevel++;
         selectedShelf = null;
 
         SetState(ECustomerState.MovingToShelf);
@@ -308,7 +313,6 @@ public class Customer : MonoBehaviour
         Debug.Log($"{gameObject.name} has completed its cycle.");
         Destroy(gameObject);
     }
-
     private void SetState(ECustomerState newState)
     {
         if(newState == ECustomerState.MovingToShelf)
@@ -319,7 +323,6 @@ public class Customer : MonoBehaviour
         state = newState;
         UpdateState();
     }
-
     private void CreditCard_OnCreditCardTaken()
     {
         handGO.SetActive(false);
@@ -331,7 +334,6 @@ public class Customer : MonoBehaviour
         isTransactionCompleted = true;
         hasStartedPlacingProducts = false;
     }
-
     private void RotateTowards(Vector3 targetPosition, float time = 0.5f)
     {
         // For debugging
@@ -367,12 +369,10 @@ public class Customer : MonoBehaviour
             transform.DORotateQuaternion(lookRotation, time).SetEase(Ease.OutQuad);
         }
     }
-
     private void RotateTowards(Transform target, float time = 0.5f)
     {
         RotateTowards(target.position, time);
     }
-
     public void UpdateQueuePosition(Vector3 newPosition)
     {
         if(state == ECustomerState.WaitingQueue)

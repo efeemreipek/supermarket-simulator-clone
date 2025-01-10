@@ -12809,6 +12809,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Computer
       objectReference: {fileID: 0}
+    - target: {fileID: 5405145333301932610, guid: 3abb2c03a93ba2648bb60c78081fbc31, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5588547082091344422, guid: 3abb2c03a93ba2648bb60c78081fbc31, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7
