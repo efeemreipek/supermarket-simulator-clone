@@ -306,6 +306,7 @@ public class Customer : MonoBehaviour
         handGO.SetActive(true);
 
         await UniTask.WaitUntil(() => isTransactionCompleted);
+        ReputationManager.Instance.ChangeReputation(satisfactionLevel);
         selectedCashRegister.RemoveFromCustomerQueue();
         SetState(ECustomerState.MovingToExit);
     }

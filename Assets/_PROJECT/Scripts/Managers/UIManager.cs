@@ -50,6 +50,16 @@ public class UIManager : Singleton<UIManager>
     [Header("Time")]
     [SerializeField] private TextMeshProUGUI dayText;
     [SerializeField] private TextMeshProUGUI timeText;
+    [Header("Reputation")]
+    [SerializeField] private Image reputationForegroundImage;
+    [SerializeField] private Color reputationBadColor;
+    [SerializeField] private Color reputationMediumColor;
+    [SerializeField] private Color reputationGoodColor;
+    [SerializeField] private Color reputationExcellentColor;
+    [SerializeField] private float reputationBadThreshold = 0.2f;
+    [SerializeField] private float reputationMediumThreshold = 0.6f;
+    [SerializeField] private float reputationGoodThreshold = 0.9f;
+    [SerializeField] private float reputationExcellentThreshold = 1f;
 
     private Color previewColor = Color.black;
     private float redSliderValue, greenSliderValue, blueSliderValue;
@@ -325,10 +335,31 @@ public class UIManager : Singleton<UIManager>
     {
         pausePanel.SetActive(!pausePanel.activeSelf);
     }
-    #endregion
     public void UpdateDayTimeText(string dayString, string timeString)
     {
         dayText.SetText(dayString);
         timeText.SetText(timeString);
     }
+    public void UpdateReputation(float amount)
+    {
+        reputationForegroundImage.fillAmount = amount;
+
+        if(amount > 0f && amount <= reputationBadThreshold)
+        {
+            reputationForegroundImage.color = reputationBadColor;
+        }
+        else if(amount > reputationBadThreshold && amount <= reputationMediumThreshold)
+        {
+            reputationForegroundImage.color = reputationMediumColor;
+        }
+        else if(amount > reputationMediumThreshold && amount <= reputationGoodThreshold)
+        {
+            reputationForegroundImage.color = reputationGoodColor;
+        }
+        else if(amount > reputationGoodThreshold && amount <= reputationExcellentThreshold)
+        {
+            reputationForegroundImage.color = reputationExcellentColor;
+        }
+    }
+    #endregion
 }
