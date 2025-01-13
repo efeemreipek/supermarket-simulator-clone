@@ -213,16 +213,25 @@ public class Customer : MonoBehaviour
     {
         for(int i = 0; i < shoppingList.Elements[currentShoppingListIndex].Amount; i++)
         {
-            if(selectedShelf.RemoveProduct())
+            if(selectedShelf.RemoveProduct(out ProductSO product, out float productPrice))
             {
-                shoppingCart.AddToCart(shoppingList.Elements[currentShoppingListIndex].Product, selectedShelf.ProductPrice);
-                priceOfProducts += selectedShelf.ProductPrice;
+                shoppingCart.AddToCart(product, productPrice);
+                priceOfProducts += productPrice;
+                if(productPrice > product.MaxPrice)
+                {
+                    Debug.Log($"{gameObject.name}: This {product.Name} is expensive");
+                    satisfactionLevel--;
+                }
+                else if(productPrice < product.SuggestedPrice)
+                {
+                    Debug.Log($"{gameObject.name}: This {product.Name} is a bargain");
+                    satisfactionLevel++;
+                }
                 await UniTask.Delay((int)productGatheringTime * 1000);
             }
         }
 
         currentShoppingListIndex++;
-        satisfactionLevel++;
         selectedShelf = null;
 
         SetState(ECustomerState.MovingToShelf);

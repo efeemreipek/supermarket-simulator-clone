@@ -68,18 +68,28 @@ public class Shelf : Selectable
             ProductPrice = 0f;
         }
     }
-    public bool RemoveProduct()
+    public bool RemoveProduct(out ProductSO product, out float productPrice)
     {
-        if(productAmount <= 0) return false;
+        if(productAmount <= 0)
+        {
+            product = null;
+            productPrice = 0f;
+            return false;
+        }
 
         Transform point = FindLastOccupiedPoint();
         Destroy(point.GetChild(0).gameObject);
         productAmount--;
+
+        product = Product;
+        productPrice = ProductPrice;
+
         if(productAmount == 0)
         {
             shelfProduct = null;
             ProductPrice = 0f;
         }
+
         return true;
     }
     private Transform FindAvailablePoint()

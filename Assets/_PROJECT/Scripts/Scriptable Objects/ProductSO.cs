@@ -10,6 +10,8 @@ public class ProductSO : ScriptableObject
     public float OrderPrice;
 
     private float profitPercentage = 0.2f;
+    private float maxPricePercantage = 0.25f;
 
     public float SuggestedPrice => Mathf.Round((OrderPrice + OrderPrice * profitPercentage) / 0.1f) * 0.1f;
+    public float MaxPrice => Mathf.Round((OrderPrice + OrderPrice * maxPricePercantage) / 0.1f) * 0.1f;
 }
