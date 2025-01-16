@@ -36,7 +36,7 @@ public class TimeManager : MonoBehaviour
                 hour++;
                 if(hour >= 20)
                 {
-                    hour = 0;
+                    hour = startHour;
                     day++;
                     OnDayChanged?.Invoke();
 

@@ -60,6 +60,11 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private float reputationMediumThreshold = 0.6f;
     [SerializeField] private float reputationGoodThreshold = 0.9f;
     [SerializeField] private float reputationExcellentThreshold = 1f;
+    [Header("End of Day")]
+    [SerializeField] private GameObject endOfDayPanel;
+    [SerializeField] private TextMeshProUGUI moneyEarnedText;
+    [SerializeField] private TextMeshProUGUI moneySpentText;
+    [SerializeField] private TextMeshProUGUI totalProfitText;
 
     private Color previewColor = Color.black;
     private float redSliderValue, greenSliderValue, blueSliderValue;
@@ -205,7 +210,7 @@ public class UIManager : Singleton<UIManager>
     }
     public void ResumeButton()
     {
-        PauseManager.Instance.UnpauseGame();
+        PauseManager.Instance.UnpauseGameMenu();
     }
     #endregion
     #region Settings
@@ -335,10 +340,20 @@ public class UIManager : Singleton<UIManager>
     {
         pausePanel.SetActive(!pausePanel.activeSelf);
     }
+    public void OpenCloseEndOfDay()
+    {
+        endOfDayPanel.SetActive(!endOfDayPanel.activeSelf);
+    }
     public void UpdateDayTimeText(string dayString, string timeString)
     {
         dayText.SetText(dayString);
         timeText.SetText(timeString);
+    }
+    public void UpdateEndOfDayText(string moneyEarnedString, string moneySpentString, string totalProfitString)
+    {
+        moneyEarnedText.SetText(moneyEarnedString);
+        moneySpentText.SetText(moneySpentString);
+        totalProfitText.SetText(totalProfitString);
     }
     public void UpdateReputation(float amount)
     {

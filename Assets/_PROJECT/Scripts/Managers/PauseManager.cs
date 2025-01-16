@@ -24,13 +24,12 @@ public class PauseManager : Singleton<PauseManager>
         {
             inputValues.Escape = false;
 
-            UnpauseGame();
+            UnpauseGameMenu();
         }
     }
-    public void UnpauseGame()
+    public void UnpauseGameMenu()
     {
-        IsPaused = !IsPaused;
-        Time.timeScale = IsPaused ? 0f : 1f;
+        UnpauseGame();
 
         if(IsPaused)
         {
@@ -49,6 +48,11 @@ public class PauseManager : Singleton<PauseManager>
         }
 
         UIManager.Instance.OpenClosePause();
+    }
+    public void UnpauseGame()
+    {
+        IsPaused = !IsPaused;
+        Time.timeScale = IsPaused ? 0f : 1f;
     }
 
     private void SetCursorLock(bool locked)
