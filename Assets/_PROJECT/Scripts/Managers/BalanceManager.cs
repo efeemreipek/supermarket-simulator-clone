@@ -9,6 +9,8 @@ public class BalanceManager : Singleton<BalanceManager>
     private decimal moneyEarned = 0m;
     private decimal moneySpent = 0m;
 
+    public decimal CurrentBalance => balance;
+
     private void Start()
     {
         balance = Convert.ToDecimal(startBalance);
